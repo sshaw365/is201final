@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soccer Trivia Game</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    #game-container {
+      text-align: center;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      border-radius: 10px;
+      max-width: 600px;
+      margin: 20px auto;
+    }
+
+    #question {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+
+    .answers {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .answers button {
+      padding: 10px;
+      font-size: 1em;
+      background-color: #f0c040;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .answers button:hover {
+      background-color: #c0a030;
+    }
+
+    #score {
+      margin-top: 20px;
+      font-size: 1.2em;
+      color: #f0c040;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <ul>
+      <li><a href="index.html">Home Page</a></li>
+      <li><a href="scratch.html">Back to Scratch Page</a></li>
+    </ul>
+  </nav>
+
+  <!-- Trivia Game Section -->
+  <div id="game-container">
+    <h2>Soccer Trivia Game</h2>
+    <div id="question">Click "Start Game" to begin!</div>
+    <div class="answers"></div>
+    <button id="start-game">Start Game</button>
+    <div id="score"></div>
+  </div>
+
+  <!-- Script for Interactive Game -->
+  <script>
+    const allQuestions = [
+      {
+        question: "Which country has won the most World Cups?",
+        answers: ["Brazil", "Germany", "Italy", "Argentina"],
+        correct: "Brazil"
+      },
+      {
+        question: "Who won the Ballon d'Or in 2023?",
+        answers: ["Cristiano Ronaldo", "Lionel Messi", "Erling Haaland", "Neymar"],
+        correct: "Lionel Messi"
+      },
+      {
+        question: "Which country hosted the 2018 FIFA World Cup?",
+        answers: ["Brazil", "Russia", "South Africa", "Qatar"],
+        correct: "Russia"
+      },
+      {
+        question: "Which club has won the most UEFA Champions League titles?",
+        answers: ["Real Madrid", "Barcelona", "Manchester United", "AC Milan"],
+        correct: "Real Madrid"
+      },
+      {
+        question: "Who holds the record for the most goals in a single World Cup?",
+        answers: ["Just Fontaine", "Pele", "Miroslav Klose", "Cristiano Ronaldo"],
+        correct: "Just Fontaine"
+      },
+      {
+        question: "Which country won the first FIFA World Cup?",
+        answers: ["Uruguay", "Italy", "Brazil", "Germany"],
+        correct: "Uruguay"
+      },
+      {
+        question: "Which player is known as 'El Fenomeno'?",
+        answers: ["Ronaldo Nazario", "Zinedine Zidane", "Ronaldinho", "Lionel Messi"],
+        correct: "Ronaldo Nazario"
+      },
+      {
+        question: "What year did the Premier League start?",
+        answers: ["1992", "1988", "1990", "1995"],
+        correct: "1992"
+      }
+    ];
+
+    const NUM_QUESTIONS_PER_GAME = 5; // Number of questions to use in each game
+    let currentQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    const questionDiv = document.getElementById("question");
+    const answersDiv = document.querySelector(".answers");
+    const startGameButton = document.getElementById("start-game");
+    const scoreDiv = document.getElementById("score");
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function loadQuestion() {
+      if (currentQuestionIndex < currentQuestions.length) {
+        const currentQuestion = currentQuestions[currentQuestionIndex];
+        questionDiv.textContent = currentQuestion.question;
+
+        // Clear old answers
+        answersDiv.innerHTML = "";
+
+        // Load new answers
+        currentQuestion.answers.forEach(answer => {
+          const button = document.createElement("button");
+          button.textContent = answer;
+          button.addEventListener("click", () => checkAnswer(answer));
+          answersDiv.appendChild(button);
+        });
+      } else {
+        endGame();
+      }
+    }
+
+    function checkAnswer(selectedAnswer) {
+      const correctAnswer = currentQuestions[currentQuestionIndex].correct;
+      if (selectedAnswer === correctAnswer) {
+        score++;
+        alert("Correct!");
+      } else {
+        alert(`Wrong! The correct answer is ${correctAnswer}.`);
+      }
+      currentQuestionIndex++;
+      loadQuestion();
+    }
+
+    function startGame() {
+      currentQuestions = shuffle([...allQuestions]).slice(0, NUM_QUESTIONS_PER_GAME);
+      currentQuestionIndex = 0;
+      score = 0;
+      scoreDiv.textContent = "";
+      startGameButton.style.display = "none";
+      loadQuestion();
+    }
+
+    function endGame() {
+      questionDiv.textContent = "Game Over! Thanks for playing.";
+      answersDiv.innerHTML = "";
+      scoreDiv.textContent = `Your final score: ${score}/${currentQuestions.length}`;
+      startGameButton.style.display = "block";
+    }
+
+    startGameButton.addEventListener("click", startGame);
+  </script>
+</body>
+</html>
